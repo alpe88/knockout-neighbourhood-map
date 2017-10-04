@@ -1,1 +1,2 @@
 //app.js
+"use strict";

@@ -5,30 +5,44 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
+    <!-- Per Google guideline scheduled for the M65 release, css has been moved to an importer -->
+	<link rel="import" href="importer.htm"></link>
+	
+	<!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+
+	
   </head>
   <body>
     <div class="container-fluid">
 	    <div class="row">
 			<div class="col-xs 12 col-md-4">
 				<!-- List goes in this column. -->
-				<div class="list-group">
-					<a href="#" class="list-group-item active">
-						Location Placeholder
-					</a>
-					<a href="#" class="list-group-item list-group-item-action">
-						Location Placeholder
-					</a>
-					<a href="#" class="list-group-item list-group-item-action">
-						Location Placeholder
-					</a>
-					<a href="#" class="list-group-item list-group-item-action">
-						Location Placeholder
-					</a>
-					<a href="#" class="list-group-item list-group-item-action disabled">
-						Location Placeholder
-					</a>
+				<form>
+				<div class="form-group">
+					<label for="searchInputTextBox">Search Area:</label>
+					<input type="text" class="form-control" id="searchInputTextBox" aria-describedby="locationSearch" placeholder="Begin typing a location..." />
+					<small id="locationSearch" class="form-text text-muted">Suggested locations will show in drop-down as you begin to type.</small>
+				</div>
+				<div class="form-group">
+					<p>Places to Explore:</p>
+					<div class="list-group">
+						<a href="#" class="list-group-item list-group-item-action">
+							Location Placeholder
+						</a>
+						<a href="#" class="list-group-item list-group-item-action">
+							Location Placeholder
+						</a>
+						<a href="#" class="list-group-item list-group-item-action">
+							Location Placeholder
+						</a>
+						<a href="#" class="list-group-item list-group-item-action">
+							Location Placeholder
+						</a>
+						<a href="#" class="list-group-item list-group-item-action">
+							Location Placeholder
+						</a>
+					</div>
 				</div>
 			</div>
 			<div class="col-xs-12 col-md-8">
@@ -51,7 +65,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
 	<!-- Optional JavaScript -->
 	<script src="js/google-maps.js"></script>
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-1EdIyUOb74oGG_mEoPvJTAGCSJvSQms&callback=initMap">
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-1EdIyUOb74oGG_mEoPvJTAGCSJvSQms&libraries=places&callback=initMap">
 	<script src="js/knockout.js" ></script>
 	<script src="js/app.js"></script>
   </body>
