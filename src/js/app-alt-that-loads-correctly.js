@@ -18,10 +18,10 @@
 		this.placeID = data.place_id;
 		this.rating = data.rating;
 		this.types = data.types;
-		this.openNow = data.opening_hours;
+		this.linkToPhoto = data.html_attributions;
 	};
 	
-
+	var LocationObject = {};
 
     function initMap(){
 		center = new google.maps.LatLng(47.613581, -122.316698);
@@ -50,8 +50,7 @@
             { firstName: 'Charles', lastName: 'Charlesforth' },
             { firstName: 'Denise', lastName: 'Dentiste' }
 		]);
-		self.locations = [];
-		self.observableLocations = ko.observableArray([]);
+		self.locations = ko.observableArray([]);
 		self.markers = [];
 		
 		this.getNearbyLocations = function(){
@@ -73,11 +72,9 @@
 							position: results[i].geometry.location,
 							animation: google.maps.Animation.DROP
 						});
-						var tempArr = JSON.parse(JSON.stringify(results[i]));
-						self.locations.push(new LocationObject(tempArr));
-						console.log('Locations: ',tempArr);
-						self.markers.push(marker);
-					}console.log('Markers: ',self.markers);console.log('LocationObjects: ',self.locations);
+						self.locations.push(new LocationObject(results[i]));
+						self.markers.push(marker);console.log('Locations: ',results[i]);
+					}console.log('Markers: ',self.markers);
 				} else{
 					alert("We were not able to find any nearby locations in this Neighbourhood.");
 				}

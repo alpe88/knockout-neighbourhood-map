@@ -18,13 +18,55 @@
 		this.placeID = data.place_id;
 		this.rating = data.rating;
 		this.types = data.types;
-		this.openNow = data.opening_hours;
+		this.linkToPhoto = data.html_attributions;
 	};
 	
-
+	//ViewModel created to observe changes on the map
+	var MapViewModel = function(){
+		var self = this;
+		self.testarr = ko.observableArray([
+			{ firstName: 'Bert', lastName: 'Bertington' },
+            { firstName: 'Charles', lastName: 'Charlesforth' },
+            { firstName: 'Denise', lastName: 'Dentiste' }
+		]);
+		self.locations = ko.observableArray([]);
+		self.markers = [];
+		
+		this.getNearbyLocations = function(mapObj, bounds, googlePlacesService){
+			if(googlePlacesService === undefined){
+				googlePlacesService = new google.maps.places.PlacesService(mapObj);
+			}
+			
+			var request = {
+				location: center,
+				radius: getBoundsRadius(bounds),
+				type: ['establishment']
+			};
+			
+			googlePlacesService.nearbySearch(request, function(results, status) {
+				if (status === google.maps.places.PlacesServiceStatus.OK) {
+					for (var i = 0; i <= 18; i++) {
+						var marker = new google.maps.Marker({
+							map: map,
+							position: results[i].geometry.location,
+							animation: google.maps.Animation.DROP
+						});
+						self.locations.push(new LocationObject(results[i]));
+						self.markers.push(marker);
+					}
+				} else{
+					alert("We were not able to find any nearby locations in this Neighbourhood.");
+				}
+			});
+		};
+		
+		this.init = function(mapObj, bounds, googlePlacesService){
+			self.getNearbyLocations(mapObj, bounds, googlePlacesService);
+		};
+	};
 
     function initMap(){
-		center = new google.maps.LatLng(47.613581, -122.316698);
+
 		map = new google.maps.Map(document.getElementById('map'), {
 			center: center,
 			zoom: 17,
@@ -39,65 +81,17 @@
 		map.fitBounds(defaultBounds);
 		
 		placesServices =  new google.maps.places.PlacesService(map);
-	}
+	}	
+	  
+
+	var myMapViewModel = new MapViewModel();
+	myMapViewModel.init(map, defaultBounds, placesServices);
+	ko.applyBindings(myMapViewModel);
 	
 	
-		//ViewModel created to observe changes on the map
-	var MapViewModel = function(){
-		var self = this;
-		self.testarr = ko.observableArray([
-			{ firstName: 'Bert', lastName: 'Bertington' },
-            { firstName: 'Charles', lastName: 'Charlesforth' },
-            { firstName: 'Denise', lastName: 'Dentiste' }
-		]);
-		self.locations = [];
-		self.observableLocations = ko.observableArray([]);
-		self.markers = [];
-		
-		this.getNearbyLocations = function(){
-			if(placesServices === undefined){
-				placesServices = new google.maps.places.PlacesService(map);
-			}
-			
-			var request = {
-				location: center,
-				radius: getBoundsRadius(defaultBounds),
-				type: ['establishment']
-			};
-			
-			placesServices.nearbySearch(request, function(results, status) {
-				if (status === google.maps.places.PlacesServiceStatus.OK) {
-					for (var i = 0; i <= 18; i++) {
-						var marker = new google.maps.Marker({
-							map: map,
-							position: results[i].geometry.location,
-							animation: google.maps.Animation.DROP
-						});
-						var tempArr = JSON.parse(JSON.stringify(results[i]));
-						self.locations.push(new LocationObject(tempArr));
-						console.log('Locations: ',tempArr);
-						self.markers.push(marker);
-					}console.log('Markers: ',self.markers);console.log('LocationObjects: ',self.locations);
-				} else{
-					alert("We were not able to find any nearby locations in this Neighbourhood.");
-				}
-			});
-		};
-		
-		this.init = function(){
-			self.getNearbyLocations();
-		};
-	};
 	
-	setTimeout(function(){
-		var myMapViewModel = new MapViewModel();
-		myMapViewModel.init();
-		ko.applyBindings(myMapViewModel); 
-	}, 500);
-		
-		
-		
-		
+	
+	
 	
 	/* Utility Functions */
 	function getBoundsRadius(bounds){
