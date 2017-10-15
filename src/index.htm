@@ -15,58 +15,46 @@
   </head>
   <body>
     <div class="container-fluid">
-	    <div class="row">
-			<div class="col-xs-12 col-md-4">
+	    <div class="row no-gutters">
+			<div class="col-xs-12 col-sm-4">
 				<!-- List goes in this column. -->
 				<form>
-				<div class="form-group">
-					<label for="searchInputTextBox">Search Area:</label>
-					<input type="text" class="form-control" id="searchInputTextBox" aria-describedby="locationSearch" placeholder="Begin typing a location..." />
-					<small id="locationSearch" class="form-text text-muted">Suggested locations will show in drop-down as you begin to type.</small>
-				</div>
+					<div class="form-group">
+						<label for="searchInputTextBox">Search Area:</label>
+						<input type="text" class="form-control" id="searchInputTextBox" aria-describedby="locationSearch" placeholder="Begin typing a location..." />
+						<small id="locationSearch" class="form-text text-muted">Suggested locations will show in drop-down as you begin to type.</small>
+					</div>
+				</form>
 				<div class="form-group">
 					<p>Places to Explore:</p>
-					<div class="list-group">
-						<!-- ko foreach: testarr -->
-						<a href="#" class="list-group-item list-group-item-action" data-bind="text:firstName">
-							<p data-bind="text:lastName">
-							Location Placeholder
-							</p>
+					<div id="location-list-container" class="list list-group" style="overflow-y:scroll;height:80vh">
+						<!-- ko foreach: locations, afterRender: loadLocationDetails(place_id, locations) -->
+						<a href="#" style="border:0;" class="list-group-item list-group-item-action" data-bind="click: function(){ $parent.whenClicked(place_id) }, attr: { id: place_id }">
+							<div class="row">
+								<div class="col-12">
+									<p data-bind="text: name">
+										Location Place-holder
+									</p>
+								</div>
+								<div class="col-12">
+									<small data-bind="text: $parent.isLocationOpen(business_hours) ?  'Open Now. ' : 'Now Closed.'">
+										Location Describer Place-holder
+									</small>
+									<small data-bind="text: rating"></small>
+								</div>
+							</div>
 						</a>
 						<!-- /ko -->
-						<a href="#" class="list-group-item list-group-item-action">
-							Location Placeholder
-						</a>
-						<a href="#" class="list-group-item list-group-item-action">
-							Location Placeholder
-						</a>
-						<a href="#" class="list-group-item list-group-item-action">
-							Location Placeholder
-						</a>
-					</div>
-				</div>
-				<div class="col-xs-12">
-					<div id="searchresult">
-						<h2>
-							Your Results...
-						</h2>
 					</div>
 				</div>
 			</div>
-			<div class="col-xs-12 col-md-8">
+			<div class="col-xs-12 col-sm-8">
 				<!-- Map goes into this column. -->
 				<div id="map" style="width:100%;height:100vh;"></div>
 			</div>
 		</div>
 	</div>
 
-    
-	
-	
-	
-	
-	
-	
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
@@ -74,6 +62,6 @@
 	<!-- Optional JavaScript -->
 	<script src="js/lib/knockout.js" ></script>
 	<script src="js/app.js"></script>
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-1EdIyUOb74oGG_mEoPvJTAGCSJvSQms&callback=initMap&libraries=places"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyC-1EdIyUOb74oGG_mEoPvJTAGCSJvSQms&callback=initMap&libraries=places"></script>
   </body>
 </html>

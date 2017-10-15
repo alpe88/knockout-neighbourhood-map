@@ -27,7 +27,7 @@
 			
 			placesServices.nearbySearch(request, function(results, status) {
 				if (status === google.maps.places.PlacesServiceStatus.OK) {
-					for (var i = 0; i <= 5; i++) {
+					for (var i = 0; i <= 15; i++) {
 						self.createMarkers(results[i]);
 						self.saveLocation(results[i]);
 					}console.log(self.markers());
@@ -80,7 +80,7 @@
 		
 		//This helper function will update the location after it's found in array.
 		this.updateLocationObject = function(locationObject, locationDetailResult){
-			if (locationObject != null || locationObject === undefined) {
+			if (locationObject != null || locationObject == undefined) {
 				locationObject.formatted_address = locationDetailResult.formatted_address;
 				locationObject.formatted_phone_number = locationDetailResult.formatted_phone_number;
 				locationObject.email = locationDetailResult.email;
@@ -98,7 +98,11 @@
 				position: place.geometry.location,
 				animation: google.maps.Animation.DROP,
 				visible: true,
-				place_id: place.place_id
+				place: {
+					placeId: place.place_id,
+					location: place.geometry.location
+				}
+				
 			});
 			google.maps.event.addListener(marker, 'click', function(){
 				self.whenClicked(place.place_id);
@@ -111,19 +115,28 @@
 			//when item is clicked set content of infowindow and open info window.
 			console.log('clickity', place_id);
 			var location = self.findLocationInObsArr(place_id, self.locations());
-			self.getLocationDetails(location);
 			console.log('Found Location: ', location );
-			var marker = self.findLocationInObsArr(place_id, self.markers());
-			console.log('Found Marker: ', marker );
-			marker.setAnimation(google.maps.Animation.BOUNCE);
-			setTimeout(function(){marker.setAnimation(null);}, 750);
-			self.showDetails(location, marker);
+			//var marker = self.findLocationInObsArr(place_id, self.markers());
+			//console.log('Found Marker: ', marker );
+
+			var locationData = self.getLocationDetails(location);
+				infoWindow.setContent('<div><p><strong>' + locationData.name + '</strong>' +
+                ' is located at the following address: ' + locationData.formatted_address + '</p></div>');
+				infoWindow.open(map, marker);
+
+			
+			
+			/*var objectInArray = self.findLocationInObsArr(place_id);
+			var locationObject;
+			console.log('Found Object: ',objectInArray);
+			if (!objectInArray.formatted_address.length){
+				locationObject = self.getLocationDetails(objectInArray);
+			}
+				//self.showDetails();*/
 		};
 		
-		self.showDetails = function(location, marker){
-			infoWindow.setContent('<div><p><strong>' + location.name + '</strong>' +
-                ' is located at the following address: ' + location.formatted_address + '</p></div>');
-			infoWindow.open(map, marker);
+		this.showDetails = function(){
+			
 		};
 		
 		self.isLocationOpen = function(trigger){
@@ -147,7 +160,10 @@
 		ko.applyBindings(myMapViewModel); 
 	}, 500);
 		
-	    
+		
+		
+		
+	
 	/* Utility Functions */
 		
     function initMap(){
@@ -184,14 +200,3 @@
 		)
 		return r_km * 1000 // radius in meters
 	}
-	
-	function pinSymbol(color, strokeColor){
-		return {
-			path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
-			fillColor: color,
-			fillOpacity: 1,
-			strokeColor: strokeColor,
-			strokeWeight: 2,
-			scale: 1,
-	};
-}
