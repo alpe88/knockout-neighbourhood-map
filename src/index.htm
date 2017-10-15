@@ -21,17 +21,17 @@
 				<form>
 					<div class="form-group">
 						<label for="searchInputTextBox">Search Area:</label>
-						<input type="text" class="form-control" id="searchInputTextBox" aria-describedby="locationSearch" placeholder="Begin typing a location..." />
+						<input type="text" class="form-control" id="searchInputTextBox" aria-describedby="locationSearch" placeholder="Begin typing a location..." data-bind="value: filter, valueUpdate: 'afterkeydown'" />
 						<small id="locationSearch" class="form-text text-muted">Suggested locations will show in drop-down as you begin to type.</small>
 					</div>
 				</form>
 				<div class="form-group">
 					<p>Places to Explore:</p>
 					<div id="location-list-container" class="list list-group" style="overflow-y:scroll;height:80vh">
-						<!-- ko foreach: locations, afterRender: loadLocationDetails(place_id, locations) -->
+						<!-- ko foreach: filteredSearch -->
 						<a href="#" style="border:0;" class="list-group-item list-group-item-action" data-bind="click: function(){ $parent.whenClicked(place_id) }, attr: { id: place_id }">
 							<div class="row">
-								<div class="col-12">
+								<div class="col-12"><small>Rated: </small><small data-bind="text: rating"></small>
 									<p data-bind="text: name">
 										Location Place-holder
 									</p>
@@ -40,7 +40,6 @@
 									<small data-bind="text: $parent.isLocationOpen(business_hours) ?  'Open Now. ' : 'Now Closed.'">
 										Location Describer Place-holder
 									</small>
-									<small data-bind="text: rating"></small>
 								</div>
 							</div>
 						</a>
