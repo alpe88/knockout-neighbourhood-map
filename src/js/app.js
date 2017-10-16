@@ -159,7 +159,7 @@ var MapViewModel = function () {
 					return self.locations();
 				} else {
 					return ko.utils.arrayFilter(self.locations(), function (location) {
-						var result = (location.name.toLowerCase().indexOf(self.filter().toLowerCase()) !=== -1);
+						var result = (location.name.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1);
 						location.marker.setVisible(result);
 						return result;
 					});
