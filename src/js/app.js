@@ -1,4 +1,4 @@
-"use strict";
+
 
 var map;
 var center;
@@ -80,7 +80,7 @@ var MapViewModel = function () {
 
 	//This helper function will update the location after it's found in array.
 	this.updateLocationObject = function (locationObject, locationDetailResult) {
-		if (locationObject != null || locationObject === undefined) {
+		if (locationObject !== null || locationObject === undefined) {
 			locationObject.formatted_address = locationDetailResult.formatted_address;
 			locationObject.formatted_phone_number = locationDetailResult.formatted_phone_number;
 			locationObject.email = locationDetailResult.email;
@@ -159,7 +159,7 @@ var MapViewModel = function () {
 					return self.locations();
 				} else {
 					return ko.utils.arrayFilter(self.locations(), function (location) {
-						var result = (location.name.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1);
+						var result = (location.name.toLowerCase().indexOf(self.filter().toLowerCase()) !=== -1);
 						location.marker.setVisible(result);
 						return result;
 					});
@@ -178,7 +178,7 @@ var MapViewModel = function () {
 			var $photos = data.photos.photo;
 			var html = '';
 			$photos.forEach(function (photo) {
-				if (photo != undefined) {
+				if (photo !== undefined) {
 					var result = self.convertFlickrResult(photo);
 					html = '<img style="width:200px;" class="img-thumbnail d-block" src="' + result.src + '" alt="' + result.alt + '">';
 					location.photos = html;
@@ -236,15 +236,15 @@ function initMap() {
 function getBoundsRadius(bounds) {
 	/* Function credit: https://stackoverflow.com/questions/3525670/radius-of-viewable-region-in-google-maps-v3 */
 	// r = radius of the earth in km
-	var r = 6378.8
+	var r = 6378.8;
 		// degrees to radians (divide by 57.2958)
-		var ne_lat = bounds.getNorthEast().lat() / 57.2958
-		var ne_lng = bounds.getNorthEast().lng() / 57.2958
-		var c_lat = bounds.getCenter().lat() / 57.2958
-		var c_lng = bounds.getCenter().lng() / 57.2958
+		var ne_lat = bounds.getNorthEast().lat() / 57.2958;
+		var ne_lng = bounds.getNorthEast().lng() / 57.2958;
+		var c_lat = bounds.getCenter().lat() / 57.2958;
+		var c_lng = bounds.getCenter().lng() / 57.2958;
 		// distance = circle radius from center to Northeast corner of bounds
 		var r_km = r * Math.acos(
 			Math.sin(c_lat) * Math.sin(ne_lat) +
-			Math.cos(c_lat) * Math.cos(ne_lat) * Math.cos(ne_lng - c_lng))
-		return r_km * 1000 // radius in meters
+			Math.cos(c_lat) * Math.cos(ne_lat) * Math.cos(ne_lng - c_lng));
+		return r_km * 1000; // radius in meters
 }
