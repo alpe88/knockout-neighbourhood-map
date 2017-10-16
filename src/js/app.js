@@ -28,7 +28,6 @@ var MapViewModel = function () {
 			if (status === google.maps.places.PlacesServiceStatus.OK) {
 				for (var i = 0; i <= 5; i++) {
 					self.saveLocation(results[i], self.createMarker(results[i]));
-					console.log('this is that same marker now stored', self.locations.marker);
 				}
 			} else {
 				alert("We were not able to find any nearby locations in this Neighbourhood.");
@@ -51,9 +50,10 @@ var MapViewModel = function () {
 		tempLocationObj.formatted_address = "";
 		tempLocationObj.formatted_phone_number = "";
 		tempLocationObj.email = "";
-		
+
 		tempLocationObj.marker = marker;
-		
+		tempLocationObj.photos = "";
+
 		console.log('This object is getting stored now: ', tempLocationObj);
 		self.locations.push(tempLocationObj);
 	};
@@ -113,8 +113,12 @@ var MapViewModel = function () {
 		var location = self.findLocationInObsArr(place_id, self.locations());
 		self.getLocationDetails(location);
 		console.log('Found Location: ', location);
+
 		var marker = location.marker;
 		console.log('Found Marker: ', marker);
+
+		var photos = self.getFlickrPhotos(location, location.name);
+
 		marker.setAnimation(google.maps.Animation.BOUNCE);
 		setTimeout(function () {
 			self.showDetails(location, marker);
@@ -126,7 +130,7 @@ var MapViewModel = function () {
 
 	self.showDetails = function (location, marker) {
 		infoWindow.setContent('<div><p><strong>' + location.name + '</strong>' +
-			' is located at the following address: ' + location.formatted_address + '. Call Now: ' + location.formatted_phone_number + '!</p></div>');
+			' is located at the following address: ' + location.formatted_address + '. Call Now: ' + location.formatted_phone_number + '!</p>' + location.photos + '</div>');
 		infoWindow.open(map, marker);
 	};
 
@@ -144,24 +148,59 @@ var MapViewModel = function () {
 
 	self.filter = ko.observable("");
 
-	/*Function credit: 
+	/*Function credit:
 	https://stackoverflow.com/questions/45422066/set-marker-visible-with-knockout-js-ko-utils-arrayfilter*/
 	this.filteredSearch = ko.computed(function () {
-		return self.locations().filter(function (location) {
-			if (!self.filter()) {
-				ko.utils.arrayForEach(self.locations(), function (location) {
-					location.marker.setVisible(true);
-				});
-				return self.locations();
-			} else {
-				return ko.utils.arrayFilter(self.locations(), function(location) {
-					var result = (location.name.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1);
-					location.marker.setVisible(result);console.log(result);
-					return result;
-				});
-			}
+			return self.locations().filter(function (location) {
+				if (!self.filter()) {
+					ko.utils.arrayForEach(self.locations(), function (location) {
+						location.marker.setVisible(true);
+					});
+					return self.locations();
+				} else {
+					return ko.utils.arrayFilter(self.locations(), function (location) {
+						var result = (location.name.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1);
+						location.marker.setVisible(result);
+						return result;
+					});
+				}
+			});
 		});
-	});
+
+	this.getFlickrPhotos = function (location, flickrSearchQuery) {
+		var apikey = '51cfa0502588646dbecd813c70178ca4';
+		flickrSearchQuery += ' in Seattle, Washington';
+		var url = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&' +
+			'api_key=' + apikey + '&text=' + flickrSearchQuery + '&format=json&per_page=1&' +
+			'sort=relevance&privacy_filter=1&nojsoncallback=1';
+
+		$.getJSON(url, function (data) {
+			var $photos = data.photos.photo;
+			var html = '';
+			$photos.forEach(function (photo) {
+				if (photo != undefined) {
+					var result = self.convertFlickrResult(photo);
+					html = '<img style="width:200px;" class="img-thumbnail d-block" src="' + result.src + '" alt="' + result.alt + '">';
+					location.photos = html;
+					console.log(location.photos);
+				} else {
+					html = '<em>No photo available at this time.</em>';
+					location.photos = html;
+				}
+			});
+		}).fail(function () {
+			alert("Sorry, there was an issue loading photos from flickr!");
+		});
+	};
+
+	this.convertFlickrResult = function (data) {
+		var photoObj = {};
+		photoObj.baseURL = "http://farm" + data.farm + ".static.flickr.com/" + data.server + "/" + data.id + "_" + data.secret;
+		photoObj.mobileSrc = photoObj.baseURL + "_m.jpg";
+		photoObj.title = data.title;
+		photoObj.src = photoObj.baseURL + ".jpg";
+		return photoObj;
+	};
 
 	this.init = function () {
 		self.getNearbyLocations();
